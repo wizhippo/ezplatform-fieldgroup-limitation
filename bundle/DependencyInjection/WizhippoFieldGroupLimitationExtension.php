@@ -21,38 +21,14 @@ class WizhippoFieldGroupLimitationExtension extends Extension implements Prepend
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('default_parameters.yaml');
         $loader->load('services.yaml');
     }
 
     public function prepend(ContainerBuilder $container)
     {
-        $this->prependKernelSettings($container);
-        $this->prependJMSTranslation($container);
-    }
-
-    public function prependKernelSettings(ContainerBuilder $container)
-    {
         $configFile = __DIR__ . '/../Resources/config/kernel.yaml';
         $config = Yaml::parse(file_get_contents($configFile));
         $container->prependExtensionConfig('ezpublish', $config);
         $container->addResource(new FileResource($configFile));
-    }
-
-    public function prependJMSTranslation(ContainerBuilder $container): void
-    {
-        $container->prependExtensionConfig('jms_translation', [
-            'configs' => [
-                'fieldgroup_limitation' => [
-                    'dirs' => [
-                        __DIR__ . '/../../',
-                    ],
-                    'output_dir' => __DIR__ . '/../Resources/translations/',
-                    'output_format' => 'xliff',
-                    'excluded_dirs' => ['Behat', 'Tests', 'node_modules'],
-                    'extractors' => [],
-                ],
-            ],
-        ]);
     }
 }

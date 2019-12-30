@@ -11,6 +11,7 @@ class PolicyProvider implements PolicyProviderInterface
     {
         $configBuilder->addConfig([
             'content_field' => [
+                'create' => ['FieldGroup'],
                 'edit' => ['FieldGroup'],
             ],
         ]);
