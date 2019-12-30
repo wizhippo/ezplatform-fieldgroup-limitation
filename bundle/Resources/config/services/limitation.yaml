@@ -1,0 +1,19 @@
+services:
+    wizhippo.role.limitation_type.fieldgroup:
+        class: Wizhippo\WizhippoFieldGroupLimitation\Core\Limitation\FieldGroupLimitationType
+        public: false
+        arguments:
+            $fieldsGroupsList: '@ezpublish.fields_groups.list'
+        tags:
+            - { name: ezpublish.limitationType, alias: FieldGroup }
+
+    wizhippo.security.limitation.fieldgrouplimitation.mapper:
+        class:  Wizhippo\WizhippoFieldGroupLimitation\EzPlatformAdminUi\Limitation\Mapper\FieldGroupFormMapper
+        parent: ezplatform.content_forms.limitation.form_mapper.multiple_selection
+        arguments:
+            $fieldsGroupsList: '@ezpublish.fields_groups.list'
+        calls:
+            - [setLogger, ['@?logger']]
+        tags:
+            - { name: ez.limitation.formMapper, limitationType: FieldGroup }
+            - { name: ez.limitation.valueMapper, limitationType: FieldGroup }

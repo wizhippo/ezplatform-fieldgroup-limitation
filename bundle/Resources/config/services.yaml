@@ -1,0 +1,12 @@
+imports:
+    - { resource: services/limitation.yaml }
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Wizhippo\WizhippoFieldGroupLimitationBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations}'

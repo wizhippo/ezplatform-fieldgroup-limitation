@@ -1,0 +1,46 @@
+{
+    "name": "wizhippo/ezplatform-fieldgroup-limitation",
+    "description": "Repository dedicated to fieldgroup limitation for eZ Platform",
+    "type": "ezplatform-bundle",
+    "license": "GPL-2.0-only",
+    "keywords": [
+        "ezplatform",
+        "ezpublish",
+        "wizhippo"
+    ],
+    "authors": [
+        {
+            "name": "Douglas Hammond",
+            "homepage": "https://github.com/wizhippo/ezplatform-fieldgroup-limitation/contributors"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Wizhippo\\WizhippoFieldGroupLimitationBundle\\": "bundle/",
+            "Wizhippo\\WizhippoFieldGroupLimitation\\": "lib/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.3",
+        "ezsystems/ezpublish-kernel": "^8.0",
+        "symfony/http-kernel": "^4.3",
+        "symfony/console": "^4.3",
+        "symfony/config": "^4.3",
+        "symfony/dependency-injection": "^4.3",
+        "symfony/yaml": "^4.3",
+        "symfony/form": "^4.3"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15"
+    },
+    "scripts": {
+        "fix-cs": "@php ./vendor/bin/php-cs-fixer fix -v --show-progress=estimating"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

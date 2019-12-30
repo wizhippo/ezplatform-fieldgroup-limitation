@@ -1,0 +1,5 @@
+policy.content_field: 'Content Field'
+policy.content_field.all_functions: 'All functions'
+policy.content_field.edit: 'Edit'
+
+policy.limitation.identifier.fieldgroup: 'Field Group'
