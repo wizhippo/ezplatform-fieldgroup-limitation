@@ -8,7 +8,7 @@ use eZ\Publish\API\Repository\Values\User\Limitation as APILimitation;
 
 class FieldGroupLimitation extends APILimitation
 {
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'FieldGroup';
     }

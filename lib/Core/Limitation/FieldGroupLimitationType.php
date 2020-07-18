@@ -79,7 +79,8 @@ class FieldGroupLimitationType implements SPILimitationTypeInterface
 
         $fieldGroups = $value->limitationValues;
         foreach ($targets as $target) {
-            if (\in_array($target->fieldGroup, $fieldGroups)) {
+            $fieldGroup = $target->fieldGroup !== '' ? $target->fieldGroup : $this->fieldsGroupsList->getDefaultGroup();
+            if (in_array($fieldGroup, $fieldGroups)) {
                 return true;
             }
         }

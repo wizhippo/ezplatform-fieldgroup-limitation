@@ -36,13 +36,6 @@ class ContentCreateViewFilter implements EventSubscriberInterface
     /** @var \eZ\Publish\API\Repository\PermissionResolver */
     private $permissionResolver;
 
-    /**
-     * @param \eZ\Publish\API\Repository\LocationService $locationService
-     * @param \eZ\Publish\API\Repository\ContentTypeService $contentTypeService
-     * @param \Symfony\Component\Form\FormFactoryInterface $formFactory
-     * @param \eZ\Publish\Core\MVC\Symfony\Locale\UserLanguagePreferenceProviderInterface $languagePreferenceProvider
-     * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
-     */
     public function __construct(
         LocationService $locationService,
         ContentTypeService $contentTypeService,
@@ -63,13 +56,6 @@ class ContentCreateViewFilter implements EventSubscriberInterface
         return [ViewEvents::FILTER_BUILDER_PARAMETERS => ['handleContentCreateForm', -1]];
     }
 
-    /**
-     * @param \eZ\Publish\Core\MVC\Symfony\View\Event\FilterViewBuilderParametersEvent $event
-     *
-     * @throws \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
-     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
-     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
-     */
     public function handleContentCreateForm(FilterViewBuilderParametersEvent $event)
     {
         if ('ez_content_edit:createWithoutDraftAction' !== $event->getParameters()->get('_controller')) {
@@ -83,7 +69,9 @@ class ContentCreateViewFilter implements EventSubscriberInterface
             $request->attributes->get('contentTypeIdentifier'),
             $this->languagePreferenceProvider->getPreferredLanguages()
         );
-        $location = $this->locationService->loadLocation($request->attributes->get('parentLocationId'));
+        $location = $this->locationService->loadLocation(
+            $request->attributes->getInt('parentLocationId')
+        );
 
         $contentCreateData = $this->resolveContentCreateData($contentType, $location, $languageCode);
         $form = $this->resolveContentCreateForm(
@@ -94,13 +82,6 @@ class ContentCreateViewFilter implements EventSubscriberInterface
         $event->getParameters()->add(['form' => $form->handleRequest($request)]);
     }
 
-    /**
-     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentType $contentType
-     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
-     * @param string $languageCode
-     *
-     * @return \EzSystems\EzPlatformContentForms\Data\Content\ContentCreateData
-     */
     private function resolveContentCreateData(
         ContentType $contentType,
         Location $location,
@@ -117,12 +98,6 @@ class ContentCreateViewFilter implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param \EzSystems\EzPlatformContentForms\Data\Content\ContentCreateData $contentCreateData
-     * @param string $languageCode
-     *
-     * @return \Symfony\Component\Form\FormInterface
-     */
     private function resolveContentCreateForm(
         ContentCreateData $contentCreateData,
         string $languageCode
@@ -130,6 +105,7 @@ class ContentCreateViewFilter implements EventSubscriberInterface
         return $this->formFactory->create(ContentEditType::class, $contentCreateData, [
             'languageCode' => $languageCode,
             'mainLanguageCode' => $languageCode,
+            'contentCreateStruct' => $contentCreateData,
             'drafts_enabled' => true,
         ]);
     }

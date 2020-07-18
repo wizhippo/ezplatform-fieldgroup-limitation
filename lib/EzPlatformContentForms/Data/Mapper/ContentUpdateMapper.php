@@ -47,7 +47,7 @@ class ContentUpdateMapper implements FormDataMapperInterface
 
         $fields = $contentDraft->getFieldsByLanguage($languageCode);
         foreach ($params['contentType']->fieldDefinitions as $fieldDef) {
-            if (!$this->permissionResolver->canUser('content_field', 'edit', $contentDraft, [$fieldDef])) {
+            if (!$this->permissionResolver->canUser('content_field', 'edit', $params['contentType'], [$fieldDef])) {
                 continue;
             }
 
