@@ -8,6 +8,7 @@ You can create policies like the below to limit field access:
 ```
 Content Field / Create / Field Group: internal_use
 Content Field / Edit / Field Group: internal_use
+Content Field / Read / Field Group: internal_use
 ```
 
 Make sure that if limitiing `Content Field / Create` the user has the ability to populate all manditory fields or an

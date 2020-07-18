@@ -13,6 +13,7 @@ class PolicyProvider implements PolicyProviderInterface
             'content_field' => [
                 'create' => ['FieldGroup'],
                 'edit' => ['FieldGroup'],
+                'read' => ['FieldGroup'],
             ],
         ]);
     }

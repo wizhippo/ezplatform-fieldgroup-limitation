@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Wizhippo\WizhippoFieldGroupLimitation\Core\Limitation;
 
 use eZ\Publish\API\Repository\Exceptions\NotImplementedException;
+use eZ\Publish\API\Repository\Values\Content\Field;
+use eZ\Publish\API\Repository\Values\ContentType\ContentType;
 use eZ\Publish\API\Repository\Values\User\Limitation as APILimitationValue;
 use eZ\Publish\API\Repository\Values\User\UserReference as APIUserReference;
 use eZ\Publish\API\Repository\Values\ValueObject;
+use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
 use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\Core\Helper\FieldsGroups\FieldsGroupsList;
@@ -28,13 +31,15 @@ class FieldGroupLimitationType implements SPILimitationTypeInterface
     {
         if (!$limitationValue instanceof APIFieldGroupLimitation) {
             throw new InvalidArgumentType('$limitationValue', APIFieldGroupLimitation::class, $limitationValue);
-        } elseif (!\is_array($limitationValue->limitationValues)) {
+        }
+
+        if (!is_array($limitationValue->limitationValues)) {
             throw new InvalidArgumentType('$limitationValue->limitationValues', 'array',
                 $limitationValue->limitationValues);
         }
 
         foreach ($limitationValue->limitationValues as $key => $value) {
-            if (!\is_string($value)) {
+            if (!is_string($value)) {
                 throw new InvalidArgumentType("\$limitationValue->limitationValues[{$key}]", 'string', $value);
             }
         }
@@ -44,10 +49,7 @@ class FieldGroupLimitationType implements SPILimitationTypeInterface
     {
         $validationErrors = [];
         $existingGroups = array_keys($this->fieldsGroupsList->getGroups());
-        $missingGroups = array_diff(
-            $limitationValue->limitationValues,
-            $existingGroups
-        );
+        $missingGroups = array_diff($limitationValue->limitationValues, $existingGroups);
 
         if (!empty($missingGroups)) {
             $validationErrors[] = new ValidationError(
@@ -71,16 +73,24 @@ class FieldGroupLimitationType implements SPILimitationTypeInterface
         APILimitationValue $value,
         APIUserReference $currentUser,
         ValueObject $object,
-        ?array $targets = null
+        array $targets = null
     ): ?bool {
-        if (null == $targets) {
-            $targets = [];
+        $targets = $targets ?? [];
+
+        if (!$object instanceof ContentType) {
+            throw new InvalidArgumentException('$object', 'Must be of type: ContentType');
         }
 
-        $fieldGroups = $value->limitationValues;
+        /** @var Field $target */
         foreach ($targets as $target) {
-            $fieldGroup = $target->fieldGroup !== '' ? $target->fieldGroup : $this->fieldsGroupsList->getDefaultGroup();
-            if (in_array($fieldGroup, $fieldGroups)) {
+            if (!$target instanceof Field) {
+                throw new InvalidArgumentException('$target', 'Target elements must be of an array of type: Field');
+            }
+            $fieldGroup = $object->getFieldDefinition($target->fieldDefIdentifier)->fieldGroup;
+            if($fieldGroup === '') {
+                $fieldGroup = $this->fieldsGroupsList->getDefaultGroup();
+            }
+            if (in_array($fieldGroup, $value->limitationValues)) {
                 return true;
             }
         }

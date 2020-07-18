@@ -35,7 +35,7 @@ class ContentEventListener implements EventSubscriberInterface
         foreach ($contentCreateStruct->fields as $name => $field) {
             $fieldDef = $contentType->getFieldDefinition($field->fieldDefIdentifier);
             if ($fieldDef) {
-                if (!$this->permissionResolver->canUser('content_field', 'create', $contentType, [$fieldDef])) {
+                if (!$this->permissionResolver->canUser('content_field', 'create', $contentType, [$field])) {
                     unset($contentCreateStruct->fields[$name]);
                 }
             }
@@ -45,12 +45,12 @@ class ContentEventListener implements EventSubscriberInterface
     public function beforeUpdateContent(BeforeUpdateContentEvent $event)
     {
         $contentUpdateStruct = $event->getContentUpdateStruct();
-        $contentType = $event->getContent()->getContentType();
+        $contentType = $event->getVersionInfo()->getContentInfo()->getContentType();
 
         foreach ($contentUpdateStruct->fields as $name => $field) {
             $fieldDef = $contentType->getFieldDefinition($field->fieldDefIdentifier);
             if ($fieldDef) {
-                if (!$this->permissionResolver->canUser('content_field', 'edit', $contentType, [$fieldDef])) {
+                if (!$this->permissionResolver->canUser('content_field', 'edit', $contentType, [$field])) {
                     unset($contentUpdateStruct->fields[$name]);
                 }
             }
